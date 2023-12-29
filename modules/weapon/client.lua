@@ -18,7 +18,7 @@ end
 function Weapon.Equip(item, data)
 	local playerPed = cache.ped
 	local coords = GetEntityCoords(playerPed, true)
-    local sleep
+	local sleep
 
 	if client.weaponanims then
 		if cache.vehicle and vehicleIsCycle(cache.vehicle) then
@@ -33,7 +33,8 @@ function Weapon.Equip(item, data)
 
 		sleep = anim and anim[3] or 1200
 
-		Utils.PlayAnimAdvanced(sleep, anim and anim[1] or 'reaction@intimidation@1h', anim and anim[2] or 'intro', coords.x, coords.y, coords.z, 0, 0, GetEntityHeading(playerPed), 8.0, 3.0, sleep*2, 50, 0.1)
+		Utils.PlayAnimAdvanced(sleep, anim and anim[1] or 'reaction@intimidation@1h', anim and anim[2] or 'intro',
+			coords.x, coords.y, coords.z, 0, 0, GetEntityHeading(playerPed), 8.0, 3.0, sleep * 2, 50, 0.1)
 	end
 
 	::skipAnim::
@@ -52,7 +53,7 @@ function Weapon.Equip(item, data)
 	if item.metadata.components then
 		for i = 1, #item.metadata.components do
 			local components = Items[item.metadata.components[i]].client.component
-			for v=1, #components do
+			for v = 1, #components do
 				local component = components[v]
 				if DoesWeaponTakeWeaponComponent(data.hash, component) then
 					if not HasPedGotWeaponComponent(playerPed, data.hash, component) then
@@ -77,7 +78,11 @@ function Weapon.Equip(item, data)
 	SetCurrentPedWeapon(playerPed, data.hash, true)
 	SetPedCurrentWeaponVisible(playerPed, true, false, false, false)
 	SetWeaponsNoAutoswap(true)
-	SetPedAmmo(playerPed, data.hash, ammo)
+	if data.hash == `WEAPON_FIREEXTINGUISHER` then
+		SetPedAmmo(playerPed, data.hash, ammo / 0.05)
+	else
+		SetPedAmmo(playerPed, data.hash, ammo)
+	end
 	SetTimeout(0, function() RefillAmmoInstantly(playerPed) end)
 
 	if item.group == `GROUP_PETROLCAN` or item.group == `GROUP_FIREEXTINGUISHER` then
@@ -118,7 +123,8 @@ function Weapon.Disarm(currentWeapon, noAnim)
 
 			local sleep = anim and anim[6] or 1400
 
-			Utils.PlayAnimAdvanced(sleep, anim and anim[4] or 'reaction@intimidation@1h', anim and anim[5] or 'outro', coords.x, coords.y, coords.z, 0, 0, GetEntityHeading(cache.ped), 8.0, 3.0, sleep, 50, 0)
+			Utils.PlayAnimAdvanced(sleep, anim and anim[4] or 'reaction@intimidation@1h', anim and anim[5] or 'outro',
+				coords.x, coords.y, coords.z, 0, 0, GetEntityHeading(cache.ped), 8.0, 3.0, sleep, 50, 0)
 		end
 
 		::skipAnim::
