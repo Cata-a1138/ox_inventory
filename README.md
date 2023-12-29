@@ -14,11 +14,18 @@
 * [原仓库](https://github.com/overextended/ox_inventory)
 * [文档](https://overextended.dev/ox_inventory)
 
-<table><tr><td><h3 align='center'>Legal Notices</h2></tr></td>
+<table><tr><td><h3 align='center'>License</h3></tr></td>
 <tr><td>
 Ox Inventory
 
-Copyright © 2022 [Linden](https://github.com/thelindat), [Dunak](https://github.com/dunak-debug), [Luke](https://github.com/LukeWasTakenn)
+
+Copyright © 2023 Overextended (https://github.com/overextended)
+
+Linden (https://github.com/thelindat)
+
+Luke (https://github.com/LukeWasTakenn)
+
+Dunak (https://github.com/dunak-debug)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
