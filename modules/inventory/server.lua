@@ -1053,8 +1053,10 @@ exports('SetMaxWeight', Inventory.SetMaxWeight)
 ---@param metadata? table | string
 ---@param slot? number
 ---@param cb? fun(success?: boolean, response: string|SlotWithItem|nil)
+---@param sender { [string]: identifier, [string]: name }
+---@param reason string
 ---@return boolean? success, string|SlotWithItem|nil response
-function Inventory.AddItem(inv, item, count, metadata, slot, cb)
+function Inventory.AddItem(inv, item, count, metadata, slot, cb, sender, reason)
 	if type(item) ~= 'table' then item = Items(item) end
 
 	if not item then return false, 'invalid_item' end
@@ -1126,7 +1128,7 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
 		}, true)
 
 		if invokingResource then
-			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, count, item.name, inv.label))
+			lib.logger(inv.owner, 'addItem', invokingResource, ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(sender?.identifier, sender?.name, inv.label, count, item.name, reason))
 		end
 
 		success = true
@@ -1148,7 +1150,7 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb)
 		inv:syncSlotsWithClients(toSlot, true)
 
 		if invokingResource then
-			lib.logger(inv.owner, 'addItem', ('"%s" added %sx %s to "%s"'):format(invokingResource, added, item.name, inv.label))
+			lib.logger(inv.owner, 'addItem', invokingResource, ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(sender?.identifier, sender?.name, inv.label, added, item.name, reason))
 		end
 
 		for i = 1, #toSlot do
@@ -1254,8 +1256,10 @@ exports('GetItemSlots', Inventory.GetItemSlots)
 ---@param metadata? table | string
 ---@param slot? number
 ---@param ignoreTotal? boolean
+---@param receiver { [string]: identifier, [string]: name }
+---@param reason string
 ---@return boolean? success, string? response
-function Inventory.RemoveItem(inv, item, count, metadata, slot, ignoreTotal)
+function Inventory.RemoveItem(inv, item, count, metadata, slot, ignoreTotal, receiver, reason)
 	if type(item) ~= 'table' then item = Items(item) end
 
 	if not item then return false, 'invalid_item' end
@@ -1330,7 +1334,7 @@ function Inventory.RemoveItem(inv, item, count, metadata, slot, ignoreTotal)
 			local invokingResource = server.loglevel > 1 and GetInvokingResource()
 
 			if invokingResource then
-				lib.logger(inv.owner, 'removeItem', ('"%s" removed %sx %s from "%s"'):format(invokingResource, removed, item.name, inv.label))
+				lib.logger(inv.owner, 'removeItem', invokingResource, ('sender_name:%s,receiver_identifier:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(inv.label, receiver?.identifier, receiver?.name, removed, item.name, reason))
 			end
 
 			return true
@@ -1559,7 +1563,7 @@ local function dropItem(source, playerInventory, fromData, data)
 	TriggerClientEvent('ox_inventory:createDrop', -1, dropId, Inventory.Drops[dropId], playerInventory.open and source, slot)
 
 	if server.loglevel > 0 then
-		lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, toData.name, playerInventory.label, dropId))
+		lib.logger(playerInventory.owner, 'swapSlots', '', ('sender_name:%s,receiver_name:%s,count:%s,item:%s'):format(playerInventory.label, dropId, data.count, toData.name))
 	end
 
 	if server.syncInventory then server.syncInventory(playerInventory) end
@@ -1714,7 +1718,7 @@ lib.callback.register('ox_inventory:swapItems', function(source, data)
 						toData, fromData = Inventory.SwapSlots(fromInventory, toInventory, data.fromSlot, data.toSlot) --[[@as table]]
 
 						if server.loglevel > 0 then
-							lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s" for %sx %s'):format(fromData.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id, toData.count, toData.name))
+							lib.logger(playerInventory.owner, 'swapSlots', '', ('sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:交换%sx %s'):format(fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id, toData.count, toData.name, fromData.count, fromData.name))
 						end
 					else return false, 'cannot_carry' end
 				else
@@ -1757,7 +1761,7 @@ lib.callback.register('ox_inventory:swapItems', function(source, data)
 						end
 
 						if server.loglevel > 0 then
-							lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id))
+							lib.logger(playerInventory.owner, 'swapSlots', '', ('sender_name:%s,receiver_name:%s,count:%s,item:%s'):format(fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id, data.count, fromData.name))
 						end
 					end
 
@@ -1807,7 +1811,7 @@ lib.callback.register('ox_inventory:swapItems', function(source, data)
 						end
 
 						if server.loglevel > 0 then
-							lib.logger(playerInventory.owner, 'swapSlots', ('%sx %s transferred from "%s" to "%s"'):format(data.count, fromData.name, fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id))
+							lib.logger(playerInventory.owner, 'swapSlots', '', ('sender_name:%s,receiver_name:%s,count:%s,item:%s'):format(fromInventory.owner and fromInventory.label or fromInventory.id, toInventory.owner and toInventory.label or toInventory.id, data.count, fromData.name))
 						end
 					end
 
@@ -2413,7 +2417,7 @@ RegisterServerEvent('ox_inventory:giveItem', function(slot, target, count)
 			if Inventory.AddItem(toInventory, item, count, data.metadata, toSlot) then
 				if Inventory.RemoveItem(fromInventory, item, count, data.metadata, slot) then
 					if server.loglevel > 0 then
-						lib.logger(fromInventory.owner, 'giveItem', ('"%s" gave %sx %s to "%s"'):format(fromInventory.label, count, data.name, toInventory.label))
+						lib.logger(fromInventory.owner, 'giveItem', invokingResource, ('sender_name:%s,receiver_name:%s,count:%s,item:%s'):format(fromInventory.label, toInventory.label, count, data.name))
 					end
 
 					return

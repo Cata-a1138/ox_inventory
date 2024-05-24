@@ -458,9 +458,10 @@ end, true)
 lib.addCommand({'additem', 'giveitem'}, {
 	help = 'Gives an item to a player with the given id',
 	params = {
-		{ name = 'target', type = 'playerId', help = 'The player to receive the item' },
-		{ name = 'item', type = 'string', help = 'The name of the item' },
-		{ name = 'count', type = 'number', help = 'The amount of the item to give', optional = true },
+		{ name = 'target', type = 'playerId', help = '玩家' },
+		{ name = 'item', type = 'string', help = '代码' },
+		{ name = 'count', type = 'number', help = '数量', optional = true },
+		{ name = 'reason', help = '原因', optional = true },
 		{ name = 'type', help = 'Sets the "type" metadata to the value', optional = true },
 	},
 	restricted = 'group.admin',
@@ -479,7 +480,7 @@ lib.addCommand({'additem', 'giveitem'}, {
 		source = Inventory(source) or { label = 'console', owner = 'console' }
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" gave %sx %s to "%s"'):format(source.label, count, item.name, inventory.label))
+			lib.logger(source.owner, 'addItem', '', ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format('admin', source.label, inventory.label, count, item.name, args.reason))
 		end
 	end
 end)
@@ -487,9 +488,10 @@ end)
 lib.addCommand('removeitem', {
 	help = 'Removes an item to a player with the given id',
 	params = {
-		{ name = 'target', type = 'playerId', help = 'The player to remove the item from' },
-		{ name = 'item', type = 'string', help = 'The name of the item' },
-		{ name = 'count', type = 'number', help = 'The amount of the item to take' },
+		{ name = 'target', type = 'playerId', help = '玩家' },
+		{ name = 'item', type = 'string', help = '物品' },
+		{ name = 'count', type = 'number', help = '数量' },
+		{ name = 'reason', help = '原因', optional = true },
 		{ name = 'type', help = 'Only remove items with a matching metadata "type"', optional = true },
 	},
 	restricted = 'group.admin',
@@ -507,7 +509,7 @@ lib.addCommand('removeitem', {
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" removed %sx %s from "%s"'):format(source.label, args.count, item.name, inventory.label))
+			lib.logger(source.owner, 'removeItem', '', ('sender_name:%s,receiver_identifier:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(inventory.label, 'admin', source.label, args.count, item.name, args.reason))
 		end
 	end
 end)
@@ -515,9 +517,10 @@ end)
 lib.addCommand('setitem', {
 	help = 'Sets the item count for a player, removing or adding as needed',
 	params = {
-		{ name = 'target', type = 'playerId', help = 'The player to set the items for' },
-		{ name = 'item', type = 'string', help = 'The name of the item' },
-		{ name = 'count', type = 'number', help = 'The amount of items to set', optional = true },
+		{ name = 'target', type = 'playerId', help = '玩家' },
+		{ name = 'item', type = 'string', help = '物品' },
+		{ name = 'count', type = 'number', help = '数量', optional = true },
+		{ name = 'reason', help = '原因', optional = true },
 		{ name = 'type', help = 'Add or remove items with the metadata "type"', optional = true },
 	},
 	restricted = 'group.admin',
@@ -535,7 +538,7 @@ lib.addCommand('setitem', {
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'admin', ('"%s" set "%s" %s count to %sx'):format(source.label, inventory.label, item.name, args.count))
+			lib.logger(source.owner, 'setItem', '', ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format('admin', source.label, inventory.label, args.count, item.name, args.reason))
 		end
 	end
 end)
