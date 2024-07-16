@@ -1154,7 +1154,7 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb, sender, reason)
 		}, true)
 
 		if invokingResource then
-			lib.logger(inv.owner, 'addItem', invokingResource, ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(sender?.identifier, sender?.name, inv.label, count, item.name, reason))
+			lib.logger(inv.owner, 'addItem', invokingResource, ('sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(sender, inv.label, count, item.name, reason))
 		end
 
 		success = true
@@ -1176,7 +1176,7 @@ function Inventory.AddItem(inv, item, count, metadata, slot, cb, sender, reason)
 		inv:syncSlotsWithClients(toSlot, true)
 
 		if invokingResource then
-			lib.logger(inv.owner, 'addItem', invokingResource, ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(sender?.identifier, sender?.name, inv.label, added, item.name, reason))
+			lib.logger(inv.owner, 'addItem', invokingResource, ('sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(sender, inv.label, added, item.name, reason))
 		end
 
 		for i = 1, #toSlot do
@@ -1360,7 +1360,7 @@ function Inventory.RemoveItem(inv, item, count, metadata, slot, ignoreTotal, rec
 			local invokingResource = server.loglevel > 1 and GetInvokingResource()
 
 			if invokingResource then
-				lib.logger(inv.owner, 'removeItem', invokingResource, ('sender_name:%s,receiver_identifier:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(inv.label, receiver?.identifier, receiver?.name, removed, item.name, reason))
+				lib.logger(inv.owner, 'removeItem', invokingResource, ('sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(inv.label, receiver, removed, item.name, reason))
 			end
 
 			return true

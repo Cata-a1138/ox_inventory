@@ -493,7 +493,7 @@ lib.addCommand({'additem', 'giveitem'}, {
 		source = Inventory(source) or { label = 'console', owner = 'console' }
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'addItem', '', ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format('admin', source.label, inventory.label, count, item.name, args.reason))
+			lib.logger(source.owner, 'addItem', '', ('sender_name:%s(管理员),receiver_name:%s,count:%s,item:%s,reason:%s'):format(source.label, inventory.label, count, item.name, args.reason))
 		end
 	end
 end)
@@ -522,7 +522,7 @@ lib.addCommand('removeitem', {
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'removeItem', '', ('sender_name:%s,receiver_identifier:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format(inventory.label, 'admin', source.label, args.count, item.name, args.reason))
+			lib.logger(source.owner, 'removeItem', '', ('sender_name:%s,receiver_name:%s(管理员),count:%s,item:%s,reason:%s'):format(inventory.label, source.label, args.count, item.name, args.reason))
 		end
 	end
 end)
@@ -551,7 +551,7 @@ lib.addCommand('setitem', {
 		source = Inventory(source) or {label = 'console', owner = 'console'}
 
 		if server.loglevel > 0 then
-			lib.logger(source.owner, 'setItem', '', ('sender_identifier:%s,sender_name:%s,receiver_name:%s,count:%s,item:%s,reason:%s'):format('admin', source.label, inventory.label, args.count, item.name, args.reason))
+			lib.logger(source.owner, 'setItem', '', ('sender_name:%s(管理员),receiver_name:%s,count:%s,item:%s,reason:%s'):format(source.label, inventory.label, args.count, item.name, args.reason))
 		end
 	end
 end)
