@@ -13,5 +13,3 @@
 # 链接
 * [原仓库](https://github.com/overextended/ox_inventory)
 * [文档](https://overextended.dev/ox_inventory)
-
-You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
