@@ -730,7 +730,7 @@ end
 -- People consistently ignore errors when one of the "modules" failed to load
 if not Utils or not Weapon or not Items or not Inventory then return end
 
-local invHotkeys = false
+local invHotkeys, hotbarDisplay = false, false
 
 ---@type function?
 local function registerCommands()
@@ -851,6 +851,16 @@ local function registerCommands()
 		onPressed = function()
 			if EnableWeaponWheel or IsNuiFocused() or lib.progressActive() then return end
 			SendNUIMessage({ action = 'toggleHotbar' })
+
+			hotbarDisplay = not hotbarDisplay
+			if hotbarDisplay then
+				local toggle = hotbarDisplay
+				SetTimeout(3000, function()
+					if toggle == hotbarDisplay then
+						hotbarDisplay = not hotbarDisplay
+					end
+				end)
+			end
 		end
 	})
 
@@ -861,6 +871,7 @@ local function registerCommands()
 			defaultKey = tostring(i),
 			onPressed = function()
 				if invOpen or IsNuiFocused() or not invHotkeys then return end
+				if cache.vehicle and not hotbarDisplay then return end
 				useSlot(i)
 			end
 		})
