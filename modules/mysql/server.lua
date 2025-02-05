@@ -27,16 +27,18 @@ Citizen.CreateThreadNow(function()
         playerColumn = 'identifier'
         vehicleTable = 'owned_vehicles'
         vehicleColumn = 'plate'
-    elseif shared.framework == 'qb' then
-        playerTable = 'players'
-        playerColumn = 'citizenid'
-        vehicleTable = 'player_vehicles'
-        vehicleColumn = 'plate'
     elseif shared.framework == 'nd' then
         playerTable = 'nd_characters'
         playerColumn = 'charid'
         vehicleTable = 'nd_vehicles'
         vehicleColumn = 'id'
+    elseif shared.framework == 'qbx' then
+        playerTable = 'players'
+        playerColumn = 'citizenid'
+        vehicleTable = 'player_vehicles'
+        vehicleColumn = 'id'
+    else
+        return
     end
 
     for k, v in pairs(Query) do
@@ -266,7 +268,7 @@ function db.saveInventories(players, trunks, gloveboxes, stashes, total)
                         end
                     end
 
-                    shared.info(saveStr:format('stashes', affectedRows, total[4], (os.nanotime() - start) / 1e6))
+                    shared.info(saveStr:format(affectedRows, total[4], 'stashes', (os.nanotime() - start) / 1e6))
                 end
             end)
         end

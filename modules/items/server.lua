@@ -51,6 +51,70 @@ local Inventory
 CreateThread(function()
 	Inventory = require 'modules.inventory.server'
 
+    if not lib then return end
+
+	if shared.framework == 'esx' then
+		local success, items = pcall(MySQL.query.await, 'SELECT * FROM items')
+
+		if success and items and next(items) then
+			local dump = {}
+			local count = 0
+
+			for i = 1, #items do
+				local item = items[i]
+
+				if not ItemList[item.name] then
+					item.close = item.closeonuse == nil and true or item.closeonuse
+					item.stack = item.stackable == nil and true or item.stackable
+					item.description = item.description
+					item.weight = item.weight or 0
+					dump[i] = item
+					count += 1
+				end
+			end
+
+			if table.type(dump) ~= "empty" then
+				local file = {string.strtrim(LoadResourceFile(shared.resource, 'data/items.lua'))}
+				file[1] = file[1]:gsub('}$', '')
+
+				---@todo separate into functions for reusability, properly handle nil values
+				local itemFormat = [[
+
+	[%q] = {
+		label = %q,
+		weight = %s,
+		stack = %s,
+		close = %s,
+		description = %q
+	},
+]]
+				local fileSize = #file
+
+				for _, item in pairs(dump) do
+					if not ItemList[item.name] then
+						fileSize += 1
+
+						local itemStr = itemFormat:format(item.name, item.label, item.weight, item.stack, item.close, item.description and json.encode(item.description) or 'nil')
+						-- temporary solution for nil values
+						itemStr = itemStr:gsub('[%s]-[%w]+ = "?nil"?,?', '')
+						file[fileSize] = itemStr
+						ItemList[item.name] = item
+					end
+				end
+
+				file[fileSize+1] = '}'
+
+				SaveResourceFile(shared.resource, 'data/items.lua', table.concat(file), -1)
+				shared.info(count, 'items have been copied from the database.')
+				shared.info('You should restart the resource to load the new items.')
+			end
+
+			shared.info('Database contains', #items, 'items.')
+		end
+
+		Wait(500)
+	end
+
 	local count = 0
 
 	Wait(1000)
@@ -270,6 +334,8 @@ function Items.UpdateDurability(inv, slot, item, value, ostime)
     }, true)
 end
 
+---@deprecated
+---Use the 'ox_inventory:usedItem' event or the 'usingItem' or 'buyItem' hooks
 local function Item(name, cb)
 	local item = ItemList[name]
 

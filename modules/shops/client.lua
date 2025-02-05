@@ -4,7 +4,7 @@ local shopTypes = {}
 local shops = {}
 local createBlip = require 'modules.utils.client'.CreateBlip
 
-for shopType, shopData in pairs(lib.load('data.shops') --[[@as table<string, OxShop>]]) do
+for shopType, shopData in pairs(lib.load('data.shops') or {} --[[@as table<string, OxShop>]]) do
 	local shop = {
 		name = shopData.name,
 		groups = shopData.groups or shopData.jobs,
@@ -136,44 +136,47 @@ local function refreshShops()
 				if target.ped then
 					id += 1
 
-					shops[id] = lib.points.new({
-						coords = target.loc,
-						heading = target.heading,
-						distance = 60,
-						inv = 'shop',
-						invId = i,
-						type = type,
-						blip = blip and hasShopAccess(shop) and createBlip(blip, target.loc),
-						ped = target.ped,
-						scenario = target.scenario,
-						label = label,
-						groups = shop.groups,
-						icon = shop.icon,
-						iconColor = target.iconColor,
-						onEnter = onEnterShop,
-						onExit = onExitShop,
-						shopDistance = target.distance,
-					})
-				else
-					if not hasShopAccess(shop) then goto nextShop end
+						shops[id] = lib.points.new({
+							coords = target.loc,
+							heading = target.heading,
+							distance = 60,
+							inv = 'shop',
+							invId = i,
+							type = type,
+							blip = blip and hasShopAccess(shop) and createBlip(blip, target.loc),
+							ped = target.ped,
+							scenario = target.scenario,
+							label = label,
+							groups = shop.groups,
+							icon = shop.icon or 'fas fa-shopping-basket',
+							iconColor = target.iconColor,
+							onEnter = onEnterShop,
+							onExit = onExitShop,
+							shopDistance = target.distance,
+						})
+					else
+						if not hasShopAccess(shop) then goto nextShop end
 
 					id += 1
 
-					shops[id] = {
-						zoneId = Utils.CreateBoxZone(target, {
-							{
-								name = shopid,
-								icon = 'fas fa-shopping-basket',
-								label = label,
-								groups = shop.groups,
-								onSelect = function()
-									client.openInventory('shop', { id = i, type = type })
-								end,
-								iconColor = target.iconColor,
-							}
-						}),
-						blip = blip and createBlip(blip, target.coords)
-					}
+						shops[id] = {
+							zoneId = Utils.CreateBoxZone(target, {
+                                {
+                                    name = shopid,
+                                    icon = shop.icon or 'fas fa-shopping-basket',
+                                    label = label,
+                                    groups = shop.groups,
+                                    onSelect = function()
+                                        client.openInventory('shop', { id = i, type = type })
+                                    end,
+                                    iconColor = target.iconColor,
+                                    distance = target.distance
+                                }
+                            }),
+							blip = blip and createBlip(blip, target.coords)
+						}
+
+					::nextShop::
 				end
 
 				::nextShop::
