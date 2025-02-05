@@ -79,15 +79,14 @@ CreateThread(function()
 
 				---@todo separate into functions for reusability, properly handle nil values
 				local itemFormat = [[
-
-	[%q] = {
-		label = %q,
-		weight = %s,
-		stack = %s,
-		close = %s,
-		description = %q
-	},
-]]
+					[%q] = {
+						label = %q,
+						weight = %s,
+						stack = %s,
+						close = %s,
+						description = %q
+					},
+				]]
 				local fileSize = #file
 
 				for _, item in pairs(dump) do
