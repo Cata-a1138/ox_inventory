@@ -6,7 +6,6 @@ import WeightBar from '../utils/WeightBar';
 import { useAppSelector } from '../../store';
 import { selectLeftInventory } from '../../store/inventory';
 import { SlotWithItem } from '../../typings';
-import { fetchNui } from '../../utils/fetchNui';
 import SlideUp from '../utils/transitions/SlideUp';
 
 const InventoryHotbar: React.FC = () => {
@@ -14,17 +13,14 @@ const InventoryHotbar: React.FC = () => {
   const items = useAppSelector(selectLeftInventory).items.slice(0, 5);
 
   //stupid fix for timeout
-  //传递快捷栏状态
   const [handle, setHandle] = useState<NodeJS.Timeout>();
   useNuiEvent('toggleHotbar', () => {
     if (hotbarVisible) {
       setHotbarVisible(false);
-      fetchNui('hotbarVisible', false);
     } else {
       if (handle) clearTimeout(handle);
       setHotbarVisible(true);
-      fetchNui('hotbarVisible', true);
-      setHandle(setTimeout(() => {setHotbarVisible(false);fetchNui('hotbarVisible', false);}, 3000));
+      setHandle(setTimeout(() => setHotbarVisible(false), 3000));
     }
   });
 

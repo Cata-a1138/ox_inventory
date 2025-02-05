@@ -6,7 +6,6 @@ require 'modules.interface.client'
 local Utils = require 'modules.utils.client'
 local Weapon = require 'modules.weapon.client'
 local currentWeapon
-local hotbarstate = false
 
 exports('getCurrentWeapon', function()
 	return currentWeapon
@@ -862,7 +861,6 @@ local function registerCommands()
 			defaultKey = tostring(i),
 			onPressed = function()
 				if invOpen or IsNuiFocused() or not invHotkeys then return end
-				if cache.vehicle and not hotbarstate then return end
 				useSlot(i)
 			end
 		})
@@ -870,12 +868,6 @@ local function registerCommands()
 
 	registerCommands = nil
 end
-
--- 获取快捷栏状态
-RegisterNUICallback('hotbarVisible', function(hotbarVisible, cb)
-	hotbarstate = hotbarVisible
-	cb(1)
-end)
 
 function client.closeInventory(server)
 	-- because somehow people are triggering this when the inventory isn't loaded
